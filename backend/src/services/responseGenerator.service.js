@@ -3,7 +3,11 @@ const openai = require("../config/openai");
 const knowledgeBase = require("../prompts/knowledgeBase");
 
 const generateAIResponse = async (ticket) => {
+
   try {
+
+    const authorName =
+      ticket.author?.name || "Author";
 
     const prompt = `
 You are a professional support representative of BookLeaf Publishing.
@@ -14,7 +18,7 @@ KNOWLEDGE BASE:
 ${knowledgeBase}
 
 AUTHOR DETAILS:
-Name: ${ticket.author?.name || "Author"}
+Name: ${authorName}
 
 SUPPORT AGENT:
 Name: BookLeaf Support Team
@@ -27,40 +31,54 @@ ${ticket.subject}
 Description:
 ${ticket.description}
 
-INSTRUCTIONS:
-- Be empathetic
-- Be professional
-- Mention the author's name naturally
-- Sign off professionally
-- Do not use placeholders
+IMPORTANT INSTRUCTIONS:
+- Start the response with: Dear ${authorName},
+- NEVER use placeholders like [Author Name]
+- NEVER say "Dear Author"
+- Mention the author name naturally
+- Be empathetic and professional
 - Keep response concise
 - Mention timelines clearly
+- Sign off with:
+Best Regards,
+BookLeaf Support Team
 
-Generate support response.
+Generate a professional support response.
 `;
 
-    const response = await openai.chat.completions.create({
-      model: "llama-3.1-8b-instant",
+    const response =
+      await openai.chat.completions.create({
 
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
+        model: "llama-3.1-8b-instant",
 
-      temperature: 0.5,
-    });
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
 
-    return response.choices[0].message.content;
+        temperature: 0.4,
+
+      });
+
+    return response
+      .choices[0]
+      .message
+      .content
+      .trim();
 
   } catch (error) {
 
-    console.log("AI Response Error:", error.message);
+    console.log(
+      "AI Response Error:",
+      error.response?.data || error.message
+    );
 
     return "AI response unavailable currently. Please respond manually.";
 
   }
+
 };
 
-module.exports = generateAIResponse; 
+module.exports = generateAIResponse;
