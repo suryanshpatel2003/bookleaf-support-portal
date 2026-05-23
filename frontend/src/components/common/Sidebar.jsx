@@ -1,5 +1,79 @@
+import { Link, useLocation } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+
 const Sidebar = () => {
-  return null;
+  const { user } = useAuth();
+  const location = useLocation();
+
+  if (!user) return null;
+
+  // Active check helper
+  const isActive = (path) => location.pathname === path;
+
+  // Configuration links map array
+  const authorLinks = [
+    { label: "Dashboard", to: "/dashboard", emoji: "📊" },
+    { label: "Books", to: "/books", emoji: "📚" },
+    { label: "Tickets", to: "/tickets", emoji: "🎟️" },
+    { label: "Submit Ticket", to: "/submit-ticket", emoji: "✍️" },
+  ];
+
+  const adminLinks = [
+    { label: "Dashboard", to: "/admin/dashboard", emoji: "🛡️" },
+    { label: "Tickets", to: "/admin/tickets", emoji: "🎫" },
+  ];
+
+  const currentLinks = user.role === "admin" ? adminLinks : authorLinks;
+
+  return (
+    <aside className="fixed left-0 bottom-0 top-[69px] w-64 backdrop-blur-md bg-gradient-to-b from-slate-950/40 to-slate-950/10 border-r border-slate-900/80 p-5 Hidden md:flex flex-col gap-2 z-40 transition-all duration-300">
+      
+      {/* Small Section Header */}
+      <div className="px-3 mb-4">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+          Navigation Control
+        </span>
+      </div>
+
+      {/* Map Loop Render Links */}
+      <nav className="space-y-1.5 flex-1">
+        {currentLinks.map((link, idx) => {
+          const itemActive = isActive(link.to);
+          
+          return (
+            <Link
+              key={idx}
+              to={link.to}
+              className={`group relative flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold tracking-wide transition-all duration-200 ${
+                itemActive
+                  ? "bg-gradient-to-r from-indigo-600/10 to-transparent text-indigo-400 border-l-[3px] border-indigo-500 pl-[13px]"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/40 border-l-[3px] border-transparent"
+              }`}
+            >
+              {/* Dynamic Emoji Indicator Icon */}
+              <span className={`text-base transition-transform duration-200 group-hover:scale-110 ${itemActive ? "opacity-100" : "opacity-60"}`}>
+                {link.emoji}
+              </span>
+
+              <span>{link.label}</span>
+
+              {/* Micro internal ambient hover pill */}
+              {!itemActive && (
+                <div className="absolute right-3 w-1 h-1 rounded-full bg-slate-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Bottom Footer layout credits */}
+      <div className="pt-4 border-t border-slate-900/60 px-3">
+        <p className="text-[10px] font-medium text-slate-600 font-mono">
+          v1.0.4 • Secure Workspace
+        </p>
+      </div>
+    </aside>
+  );
 };
 
 export default Sidebar;

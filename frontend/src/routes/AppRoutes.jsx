@@ -1,4 +1,8 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 
 import LoginPage from "../pages/auth/LoginPage";
 
@@ -10,9 +14,13 @@ import MyTickets from "../pages/author/MyTickets";
 
 import SubmitTicket from "../pages/author/SubmitTicket";
 
+import AuthorTicketDetails from "../pages/author/TicketDetails";
+
 import AdminDashboard from "../pages/admin/AdminDashboard";
 
 import AllTickets from "../pages/admin/AllTickets";
+
+import AdminTicketDetails from "../pages/admin/TicketDetails";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -21,8 +29,10 @@ import RoleRoute from "./RoleRoute";
 import AuthProvider from "../context/AuthContext";
 
 const AppRoutes = () => {
+
   return (
     <BrowserRouter>
+
       <AuthProvider>
 
         <Routes>
@@ -31,6 +41,8 @@ const AppRoutes = () => {
             path="/"
             element={<LoginPage />}
           />
+
+          {/* AUTHOR ROUTES */}
 
           <Route
             path="/dashboard"
@@ -77,6 +89,19 @@ const AppRoutes = () => {
           />
 
           <Route
+            path="/tickets/:id"
+            element={
+              <ProtectedRoute>
+                <RoleRoute role="author">
+                  <AuthorTicketDetails />
+                </RoleRoute>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ADMIN ROUTES */}
+
+          <Route
             path="/admin/dashboard"
             element={
               <ProtectedRoute>
@@ -98,9 +123,21 @@ const AppRoutes = () => {
             }
           />
 
+          <Route
+            path="/admin/tickets/:id"
+            element={
+              <ProtectedRoute>
+                <RoleRoute role="admin">
+                  <AdminTicketDetails />
+                </RoleRoute>
+              </ProtectedRoute>
+            }
+          />
+
         </Routes>
 
       </AuthProvider>
+
     </BrowserRouter>
   );
 };
