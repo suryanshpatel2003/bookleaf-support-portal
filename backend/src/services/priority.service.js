@@ -25,7 +25,7 @@ ${ticketText}
 `;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+     model: "llama-3.1-8b-instant",
 
       messages: [
         {

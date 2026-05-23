@@ -13,7 +13,13 @@ Use the knowledge base and communication tone strictly.
 KNOWLEDGE BASE:
 ${knowledgeBase}
 
-AUTHOR TICKET:
+AUTHOR DETAILS:
+Name: ${ticket.author?.name || "Author"}
+
+SUPPORT AGENT:
+Name: BookLeaf Support Team
+
+TICKET DETAILS:
 
 Subject:
 ${ticket.subject}
@@ -24,16 +30,17 @@ ${ticket.description}
 INSTRUCTIONS:
 - Be empathetic
 - Be professional
-- Give specific timelines
-- Do not sound robotic
+- Mention the author's name naturally
+- Sign off professionally
+- Do not use placeholders
 - Keep response concise
-- Mention next steps clearly
+- Mention timelines clearly
 
 Generate support response.
 `;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "llama-3.1-8b-instant",
 
       messages: [
         {
